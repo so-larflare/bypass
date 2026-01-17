@@ -2,6 +2,16 @@
 videos目录存放两种方法效果实验录屏。
 
 ## 速率实验、CPU使用率实验
+### 测量原理
+主机B作为iperf3服务端，主机A作为iperf3客户端，通过TC机制设置主机A和主机B之间的网络带宽。
+首先在没有部署时，测量iperf3网络传输速率和CPU使用率。
+然后构造背景流量和隐蔽流量，在部署时，测量iperf3网络传输速率和CPU使用率。
+
+实验在腾讯云中进行（S9.4XLARGE32实例），两台主机的带宽固定为8Gbps，这个带宽是无法配置的。
+于是实验选择使用软件方式——Linux TC机制设置两台主机之间的实际网络带宽。具体来说没有在主机A上配置，以免Linux TC的相关算法消耗处理器资源，干扰实验，于是选择在主机B上配置Linux TC的限速规则。脚本`limit.sh`实现了主机B的网络带宽限速。
+
+### 测量过程
+
 iperf3-data目录存放网络传输速率实验、CPU使用率实验数据。
 数据来源iperf3，iperf3传入-J参数可以将测试日志以JSON的格式输出，测量结果记录了速率和CPU使用率，便于网络速率和CPU使用率数据的获取。
 ```
@@ -54,9 +64,9 @@ ffffffff91b12670 t __netif_receive_skb_core.constprop.0
 对于发送方向的数据包，当数据包被`__ip_local_out`函数处理时获得当前时间，以数据包负载中的编号为键，以当前时间为值，写入键值对数据结构中。
 当改数据包经过virtio的数据包发送实现函数`start_xmit`函数时，再次获取当前时间，同键值对数据结构中的初始值进行比较，差值就是数据包在`__ip_local_out -> start_xmit`之间经历的时间。
 
-实验在腾讯云中进行（S9.4XLARGE32实例）。腾讯云云服务器使用virtio网卡，virtio网卡使用`start_xmit`函数作为网卡驱动接管带发送数据包的函数，所以实验选择针对`start_xmit`函数进行插桩。
-此外，出于性能考虑，virtio没有将数据包的内容存储在skbuff的线性区域中，而是存储在分段区域中，所以`latency-measure/02_latency_udp_tx/02_latency_udp_tx.c`
-中从skbuff的`skb_shared_info`结构中读取数据包的内容，而不是从skbuff的data数组中读取数据包内容。
+腾讯云云服务器使用virtio网卡，virtio网卡驱动使用`start_xmit`函数作为接管待发送数据包的函数，所以实验选择针对`start_xmit`函数进行插桩。
+出于性能考虑，virtio没有将数据包的内容存储在skbuff的线性区域中，而是存储在分段区域中，所以`latency-measure/02_latency_udp_tx/02_latency_udp_tx.c`
+从skbuff的`skb_shared_info`结构中读取数据包的内容，而不是从skbuff的data数组中读取数据包内容。
 
 #### latency-measure目录
 latency-measure目录存放处理实验相关脚本和代码。此部分有三个子目录：
