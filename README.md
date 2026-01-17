@@ -40,6 +40,7 @@ lantency-data目录存放数据包处理时延数据。
 由于内核编译环境的不同，在Ubuntu 22.04中`__netif_receive_skb_core`函数经过常量传播的优化，该函数并不能直接被插桩。
 但是可以在`/proc/kallsyms`中获取其实际地址，命令如下：
 ```
+sudo cat /proc/kallsyms | grep __netif_receive_skb_core
 ffffffff91b12670 t __netif_receive_skb_core.constprop.0
 ```
 
