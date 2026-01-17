@@ -5,21 +5,14 @@ videos目录存放两种方法效果实验录屏。
 iperf3-data目录存放网络传输速率实验、CPU使用率实验数据。
 数据来源iperf3，iperf3传入-J参数可以将测试日志以JSON的格式输出，测量结果记录了速率和CPU使用率，便于网络速率和CPU使用率数据的获取。
 ```
-actual-*Mbps.json
-没有部署时，网络传输速率和CPU使用率实验结果。
-
-way1-backgd-*Mbps.json
-部署第一种方法，背景流量网络传输速率和CPU使用率实验结果。
-
-way1-covert-*Mbps.json
-部署第一种方法，隐蔽流量网络传输速率和CPU使用率实验结果。
-
-way2-backgd-*Mbps.json
-部署第二种方法，背景流量网络传输速率和CPU使用率实验结果。
-
-way2-covert-*Mbps.json
-部署第二种方法，隐蔽流量网络传输速率和CPU使用率实验结果。
+actual-*Mbps.json: 没有部署时，网络传输速率和CPU使用率实验结果。
+way1-backgd-*Mbps.json: 部署第一种方法，背景流量网络传输速率和CPU使用率实验结果。
+way1-covert-*Mbps.json: 部署第一种方法，隐蔽流量网络传输速率和CPU使用率实验结果。
+way2-backgd-*Mbps.json: 部署第二种方法，背景流量网络传输速率和CPU使用率实验结果。
+way2-covert-*Mbps.json: 部署第二种方法，隐蔽流量网络传输速率和CPU使用率实验结果。
 ```
+
+`draw-throughput.py`和`draw-cpu.py`脚本会根据`iperf3-data`的实验结果，绘制网络传输速率影响图和CPU使用率影响图。
 
 ## 数据包处理时延实验
 ### 测量原理
@@ -83,3 +76,4 @@ lantency-data目录存放数据包处理时延数据。在三个子目录下，�
 5000-nobypass.txt：不部署，隐蔽流量数据包处理时延
 ```
 这四个文件均为内核日志输出文件（dmesg命令输出），筛选整理后导出到对应```.data.txt```文件。
+`draw-latency.py`脚本会根据`latency-data`的实验结果，绘制箱形图，展示两种方法引入的数据包处理时间。
