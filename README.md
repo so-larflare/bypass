@@ -43,7 +43,8 @@ lantency-data目录存放数据包处理时延数据。
 ffffffff91b12670 t __netif_receive_skb_core.constprop.0
 ```
 
-地址`ffffffff91b12670`在不同机器上会有所变化。获得实际地址后，需要手动填充到`latency-measure/01_latency_udp_rx/01_latency_udp_rx.c`文件的第110行中，形如
+地址`ffffffff91b12670`在不同机器上会有所变化，系统重启也会更改，因此需要手动从`/proc/kallsyms`中获取`__netif_receive_skb_core`函数地址。
+获得实际地址后，需要手动填充到`latency-measure/01_latency_udp_rx/01_latency_udp_rx.c`文件的第110行中，形如
 ```
 108 static struct kprobe kp1 = 
 109 {
